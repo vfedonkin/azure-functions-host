@@ -214,7 +214,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Management
             var content = JsonConvert.SerializeObject(triggers);
             var token = SimpleWebTokenHelper.CreateToken(DateTime.UtcNow.AddMinutes(5));
 
-            var url = $"https://{Environment.GetEnvironmentVariable(EnvironmentSettingNames.AzureWebsiteHostName)}/operations/settriggers";
+            var url = $"http://{Environment.GetEnvironmentVariable(EnvironmentSettingNames.AzureWebsiteHostName)}/operations/settriggers";
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
