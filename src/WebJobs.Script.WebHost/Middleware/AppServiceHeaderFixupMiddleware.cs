@@ -4,31 +4,33 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Script.Extensions;
+using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.Azure.WebJobs.Script.WebHost.Middleware
 {
-    public class NonAppServiceWorkerMiddleware
+    public class AppServiceHeaderFixupMiddleware
     {
         private const string DisguisedHostHeader = "DISGUISED-HOST";
         private const string HostHeader = "HOST";
         private const string ForwardedProtocolHeader = "X-Forwarded-Proto";
         private readonly RequestDelegate _next;
 
-        public NonAppServiceWorkerMiddleware(RequestDelegate next)
+        public AppServiceHeaderFixupMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
-            if (httpContext.Request.Headers.ContainsKey(DisguisedHostHeader))
+            StringValues value;
+            if (httpContext.Request.Headers.TryGetValue(DisguisedHostHeader, out value))
             {
-                httpContext.Request.Headers[HostHeader] = httpContext.Request.Headers[DisguisedHostHeader];
+                httpContext.Request.Headers[HostHeader] = value;
             }
 
-            if (httpContext.Request.Headers.ContainsKey(ForwardedProtocolHeader))
+            if (httpContext.Request.Headers.TryGetValue(ForwardedProtocolHeader, out value))
             {
-                httpContext.Request.Scheme = httpContext.Request.Headers[ForwardedProtocolHeader];
+                httpContext.Request.Scheme = value;
             }
 
             await _next(httpContext);

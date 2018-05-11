@@ -22,7 +22,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost
         {
             if (!ScriptSettingsManager.Instance.IsAppServiceEnvironment)
             {
-                builder.UseMiddleware<NonAppServiceWorkerMiddleware>();
+                builder.UseMiddleware<AppServiceHeaderFixupMiddleware>();
             }
 
             builder.UseMiddleware<HttpExceptionMiddleware>();
